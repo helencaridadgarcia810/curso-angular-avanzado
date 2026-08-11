@@ -1,12 +1,13 @@
 import {
   Component,
-  Input,
-  SimpleChanges,
   signal,
   OnChanges,
   OnInit,
   AfterViewInit,
   OnDestroy,
+  input,
+  effect,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -16,10 +17,11 @@ import { CommonModule } from '@angular/common';
   templateUrl: './counter.component.html',
 })
 export class CounterComponent
-  implements OnChanges, OnInit, AfterViewInit, OnDestroy
+  implements OnInit, AfterViewInit, OnDestroy
 {
-  @Input({ required: true }) duration = 0;
-  @Input({ required: true }) message = '';
+  duration = input.required<number>() ;
+  doubleDuration = computed (() => this.duration() * 2);
+  message = input.required<string>();
   counter = signal(0);
   counterRef: number | undefined;
 
@@ -31,25 +33,18 @@ export class CounterComponent
     console.log('-'.repeat(10));
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    // before and during render
-    console.log('ngOnChanges');
-    console.log('-'.repeat(10));
-    console.log(changes);
-    const duration = changes['duration'];
-    if (duration && duration.currentValue !== duration.previousValue) {
-      this.doSomething();
-    }
-  }
-
   ngOnInit() {
     // after render
     // una vez
     // async, then, subs
     console.log('ngOnInit');
     console.log('-'.repeat(10));
-    console.log('duration =>', this.duration);
-    console.log('message =>', this.message);
+    effect(()=>{
+      this.duration();
+      this.doSomething();
+    });
+    // console.log('duration =>', this.duration);
+    // console.log('message =>', this.message);
     this.counterRef = window.setInterval(() => {
       console.log('run interval');
       this.counter.update((statePrev) => statePrev + 1);
