@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, model, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CounterComponent } from '@shared/components/counter/counter.component';
@@ -18,7 +18,7 @@ import { WaveAudioComponent } from '@info/components/wave-audio/wave-audio.compo
 })
 export default class AboutComponent {
   duration = signal(1000);
-  message = signal('Hola');
+  message = model.required <string>;
 
   changeDuration(event: Event) {
     const input = event.target as HTMLInputElement;
